@@ -19,7 +19,7 @@ wind_data_mm = mm.fit_transform(wind_data)
 
 state_ss = np.expand_dims(state_ss, 1)
 
-model = keras.saving.load_model("models/keras/model_keras_2.keras")
+model = keras.saving.load_model("models/keras/model_keras_3.keras")
 predicted_wind = model.predict(state_ss)
 
 predicted_wind = mm.inverse_transform(predicted_wind)

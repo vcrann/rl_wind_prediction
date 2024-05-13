@@ -40,11 +40,18 @@ state_test = state_ss[1800:, :]
 wind_train = wind_data_mm[:1800, :]
 wind_test = wind_data_mm[1800:, :]
 
+# Line up state with wind 1 timestep ahead
+state_train = state_train[:-1]
+state_test = state_test[:-1]
+
+wind_train = wind_train[1:]
+wind_test = wind_test[1:]
+
 # state_train = np.reshape(state_train, (int(batch), 50, 6))
 
 state_train = np.expand_dims(state_train, 1)
 state_test = np.expand_dims(state_test, 1)
-
+print(state_train.shape)
 
 training = model.fit(
     state_train,
@@ -64,4 +71,4 @@ plt.legend(["train", "validation"], loc="upper right", ncol=2)
 
 plt.show()
 
-model.save("models/keras/model_keras_2.keras")
+model.save("models/keras/model_keras_3.keras")
