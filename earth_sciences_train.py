@@ -12,10 +12,10 @@ day_change_indexes = np.load(
 )  # Last index of each day
 
 # Making the dataset smaller for development
-raw_data = raw_data[:100000]
-day_change_indexes = day_change_indexes[
-    : day_change_indexes.searchsorted(100000, "right") - 1
-]
+raw_data = raw_data[:10000]
+# day_change_indexes = day_change_indexes[
+#     : day_change_indexes.searchsorted(100000, "right") - 1
+# ]
 
 data_indexes = list(range(len(raw_data)))
 
@@ -23,21 +23,33 @@ lookback_window = 200
 prediction_window = 20
 
 day_start_index = 0
-for day_end_index in day_change_indexes:
-    # prediction_indexes = list(range(day_end_index - prediction_window + 1, day_end_index))
-    del data_indexes[
-        day_end_index - prediction_window + 1 : day_end_index
-    ]  # remove indexes that cant be selected at end of day
-    # lookback_indexes = list(
-    #     range(day_start_index, day_start_index + lookback_window - 1)
-    # )
-    del data_indexes[
-        day_start_index : day_start_index + lookback_window - 1
-    ]  # remove indexes that cant be selected at start of day
-    day_start_index = day_end_index + 1
 
-training_indexes = data_indexes[: int(len(data_indexes) * 0.8)]
-validation_indexes = data_indexes[int(len(data_indexes) * 0.8) :]
+# TODO add back for training set larger than 1 day
+
+# for day_end_index in day_change_indexes:
+#     # prediction_indexes = list(range(day_end_index - prediction_window + 1, day_end_index))
+#     del data_indexes[
+#         day_end_index - prediction_window + 1 : day_end_index # TODO check this maybe -1
+#     ]  # remove indexes that cant be selected at end of day
+#     # lookback_indexes = list(
+#     #     range(day_start_index, day_start_index + lookback_window - 1)
+#     # )
+#     del data_indexes[
+#         day_start_index : day_start_index + lookback_window - 1
+#     ]  # remove indexes that cant be selected at start of day
+#     day_start_index = day_end_index + 1
+
+del data_indexes[
+    : lookback_window - 1
+]  # remove indexes that cant be selected at start of dataset
+del data_indexes[
+    len(data_indexes) - prediction_window - 1 :
+]  # remove indexes that cant be selected at end of dataset
+
+
+# training_indexes = data_indexes[: int(len(data_indexes) * 0.8)]
+# validation_indexes = data_indexes[int(len(data_indexes) * 0.8) :]
+training_indexes = data_indexes
 
 # TODO this is a bit of a sin because it causes data leakage, should scale training and validation data separately
 mm = MinMaxScaler()
@@ -51,19 +63,19 @@ training_data_generator = DataGenerator(
     lookback_window,
     prediction_window,
     16,
-    use_multiprocessing=True,
-    workers=8,
+    # use_multiprocessing=True,
+    # workers=8,
 )
 
-validation_data_generator = DataGenerator(
-    validation_indexes,
-    normalised_data,
-    lookback_window,
-    prediction_window,
-    16,
-    use_multiprocessing=True,
-    workers=8,
-)
+# validation_data_generator = DataGenerator(
+#     validation_indexes,
+#     normalised_data,
+#     lookback_window,
+#     prediction_window,
+#     16,
+#     # use_multiprocessing=True,
+#     # workers=8,
+# )
 
 data_dim = 3
 model = keras.Sequential()
@@ -83,13 +95,13 @@ model.compile(optimizer=optimizer, loss="mse", metrics=["accuracy"])
 
 
 # print(training_data_generator[0][0].shape)
-# TODO normalise data!
+
 training = model.fit(
     training_data_generator,
     epochs=1500,
     batch_size=16,
     verbose=2,
-    validation_data=validation_data_generator,
+    # validation_data=validation_data_generator,
 )
 
 plt.plot(training.history["loss"])
@@ -97,7 +109,7 @@ plt.plot(training.history["val_loss"])
 plt.title("train vs validation loss")
 plt.ylabel("loss")
 plt.xlabel("epoch")
-plt.legend(["train", "validation"], loc="upper right", ncol=2)
+# plt.legend(["train", "validation"], loc="upper right", ncol=2)
 
 plt.show()
 

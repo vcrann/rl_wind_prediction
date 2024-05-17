@@ -1,5 +1,6 @@
 import numpy as np
 import keras
+import random
 
 
 class DataGenerator(keras.utils.Sequence):
@@ -11,6 +12,7 @@ class DataGenerator(keras.utils.Sequence):
         data,
         lookback_window,
         prediction_window,
+        shuffle=True,
         batch_size=32,
         **kwargs
     ):
@@ -20,6 +22,7 @@ class DataGenerator(keras.utils.Sequence):
         self.data = data
         self.lookback_window = lookback_window
         self.prediction_window = prediction_window
+        self.shuffle = shuffle
         self.on_epoch_end()
 
     def __len__(self):
@@ -42,7 +45,12 @@ class DataGenerator(keras.utils.Sequence):
         i = 0
         for index in indexes:
             # X[index], Y[index] = self.__create_datapoint(index)
-            X[i], Y[i] = self.__create_datapoint(index)
+            x, y = self.__create_datapoint(index)
+            # print(index)
+            # print(y.shape)
+            # X[i], Y[i] = self.__create_datapoint(index)
+            X[i] = x
+            Y[i] = y
             i += 1
 
         return X, Y
@@ -50,7 +58,8 @@ class DataGenerator(keras.utils.Sequence):
     def on_epoch_end(self):
         "Updates indexes after each epoch"
         # self.indexes = np.arange(len(self.list_IDs))
-        # if self.shuffle == True:
+        if self.shuffle == True:
+            random.shuffle(self.list_IDs)
         #     np.random.shuffle(self.indexes)
 
     def __create_datapoint(self, index):
