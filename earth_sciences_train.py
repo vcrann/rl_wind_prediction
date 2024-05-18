@@ -19,8 +19,8 @@ raw_data = raw_data[:10000]
 
 data_indexes = list(range(len(raw_data)))
 
-lookback_window = 200
-prediction_window = 20
+lookback_window = 20
+prediction_window = 10
 
 day_start_index = 0
 
@@ -98,19 +98,19 @@ model.compile(optimizer=optimizer, loss="mse", metrics=["accuracy"])
 
 training = model.fit(
     training_data_generator,
-    epochs=1500,
+    epochs=500,
     batch_size=16,
     verbose=2,
     # validation_data=validation_data_generator,
 )
 
+model.save("models/wind_prediction/env_sci_model_1.keras")
+
 plt.plot(training.history["loss"])
-plt.plot(training.history["val_loss"])
+# plt.plot(training.history["val_loss"])
 plt.title("train vs validation loss")
 plt.ylabel("loss")
 plt.xlabel("epoch")
 # plt.legend(["train", "validation"], loc="upper right", ncol=2)
 
 plt.show()
-
-model.save("models/wind_prediction/env_sci_model_1.keras")
