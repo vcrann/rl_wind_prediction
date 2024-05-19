@@ -19,9 +19,9 @@ prediction_window = 10
 mm = MinMaxScaler()
 normalised_data = mm.fit_transform(raw_data)
 
-model = keras.saving.load_model("models/wind_prediction/env_sci_model_1.keras")
+model = keras.saving.load_model("models/wind_prediction/env_sci_model_2.keras")
 
-plotting_indexes = [5000]
+plotting_indexes = [8000]
 
 data_generator = DataGenerator(
     plotting_indexes,

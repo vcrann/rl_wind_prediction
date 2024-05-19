@@ -62,7 +62,8 @@ training_data_generator = DataGenerator(
     normalised_data,
     lookback_window,
     prediction_window,
-    16,
+    shuffle=True,
+    batch_size=16,
     # use_multiprocessing=True,
     # workers=8,
 )
@@ -98,13 +99,13 @@ model.compile(optimizer=optimizer, loss="mse", metrics=["accuracy"])
 
 training = model.fit(
     training_data_generator,
-    epochs=500,
+    epochs=1500,
     batch_size=16,
     verbose=2,
     # validation_data=validation_data_generator,
 )
 
-model.save("models/wind_prediction/env_sci_model_1.keras")
+model.save("models/wind_prediction/env_sci_model_2.keras")
 
 plt.plot(training.history["loss"])
 # plt.plot(training.history["val_loss"])
