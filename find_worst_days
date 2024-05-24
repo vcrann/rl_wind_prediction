@@ -1,0 +1,66 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+raw_data = np.load("data/earth_sciences_anemometer/all_data.npy")
+day_change_indexes = np.load(
+    "data/earth_sciences_anemometer/end_indexes.npy"
+)  # Last index of each day
+
+# Split data into days
+days = []
+for i in range(len(day_change_indexes)):
+    if i == 0:
+        days.append(raw_data[: day_change_indexes[i]])
+    else:
+        days.append(raw_data[day_change_indexes[i - 1] + 1 : day_change_indexes[i]])
+
+# perform fft on first day
+day = days[0]
+# fft = np.fft.fft(day[:, 0])
+# fft = np.abs(fft)
+# # fft = fft[: len(fft) // 2]  # Only take first half of fft
+# plt.plot(fft)
+# plt.show()
+fft_totals = []
+
+for i in range(len(days)):
+    day = days[i]
+    fft_total = 0
+    for j in range(day.shape[1]):
+        fft = np.fft.fft(day[:, j]) / len(day)
+        # freq = np.fft.fftfreq(len(day), 1 / 20)
+
+        # # Plot analytic signal - right half of frequency axis needed only...
+        # firstNegInd = np.argmax(freq < 0)
+        # freqAxisPos = freq[0:firstNegInd]
+        # sigFFTPos = 2 * fft[0:firstNegInd]  # *2 because of magnitude of analytic signal
+        # fft_total += np.sum(np.abs(sigFFTPos))
+        fft_total += np.sum(np.abs(fft))
+    fft_totals.append(fft_total)
+
+worst_days = np.flip(np.argsort(fft_totals))
+print(worst_days)
+np.save("data/earth_sciences_anemometer/indexes_severity_order.npy", worst_days)
+
+
+# plt.figure()
+# plt.plot(freqAxisPos, np.abs(sigFFTPos))
+# plt.xlabel("Frequency (Hz)")
+# plt.ylabel("Magnitude")
+# plt.title("Analytic FFT plot")
+# plt.show()
+
+# fft = np.fft.fft(day[:, 0]) / len(day)
+# freq = np.fft.fftfreq(len(day), 1 / 20)
+
+# # Plot analytic signal - right half of frequence axis needed only...
+# firstNegInd = np.argmax(freq < 0)
+# freqAxisPos = freq[0:firstNegInd]
+# sigFFTPos = 2 * fft[0:firstNegInd]  # *2 because of magnitude of analytic signal
+
+# plt.figure()
+# plt.plot(freqAxisPos, np.abs(sigFFTPos))
+# plt.xlabel("Frequency (Hz)")
+# plt.ylabel("Magnitude")
+# plt.title("Analytic FFT plot")
+# plt.show()
