@@ -15,7 +15,6 @@ for i in range(len(day_change_indexes)):
         days.append(raw_data[day_change_indexes[i - 1] + 1 : day_change_indexes[i]])
 
 # perform fft on first day
-day = days[0]
 # fft = np.fft.fft(day[:, 0])
 # fft = np.abs(fft)
 # # fft = fft[: len(fft) // 2]  # Only take first half of fft
@@ -39,9 +38,14 @@ for i in range(len(days)):
     fft_totals.append(fft_total)
 
 worst_days = np.flip(np.argsort(fft_totals))
-print(worst_days)
+# print(worst_days)
 np.save("data/earth_sciences_anemometer/indexes_severity_order.npy", worst_days)
 
+
+ten_worst_days = [days[i] for i in worst_days[:10]]
+# np.save("data/earth_sciences_anemometer/ten_worst_days.npy", ten_worst_days)
+
+np.save("data/earth_sciences_anemometer/worst_day.npy", days[worst_days[0]])
 
 # plt.figure()
 # plt.plot(freqAxisPos, np.abs(sigFFTPos))
