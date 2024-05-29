@@ -3,8 +3,8 @@ import numpy as np
 
 raw_data = np.load("data/earth_sciences_anemometer/worst_day.npy")  # shape: (x, 3)
 
-lookback_window = 40
-prediction_window = 10
+lookback_window = 20
+prediction_window = 1
 
 # output_size = raw_data.shape[0] - lookback_window - prediction_window + 1
 
@@ -40,5 +40,5 @@ for i in range(output_size):
 print(X.shape)
 print(Y.shape)
 
-np.save("data/earth_sciences_anemometer/training_data/worst_day_X_40_10.npy", X)
-np.save("data/earth_sciences_anemometer/training_data/worst_day_Y_40_10.npy", Y)
+np.save("data/earth_sciences_anemometer/training_data/worst_day_X_20_1.npy", X)
+np.save("data/earth_sciences_anemometer/training_data/worst_day_Y_20_1.npy", Y)
