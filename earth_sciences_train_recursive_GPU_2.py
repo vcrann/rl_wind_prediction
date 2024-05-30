@@ -71,7 +71,7 @@ training = model.fit(
     lookforward_train,
     epochs=100,
     batch_size=16,
-    verbose=2,
+    verbose=1,
     shuffle=True,
     validation_data=(lookback_validate_mm, lookforward_validate),
 )
