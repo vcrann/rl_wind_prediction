@@ -53,24 +53,32 @@ lookforward_train = lookforward_train[p]
 data_dim = 3
 model = keras.Sequential()
 model.add(keras.Input(shape=(None, data_dim)))
-model.add(layers.LSTM(64, activation="tanh", dropout=0.96))
+# model.add(layers.LSTM(420, return_sequences=True, input_shape=(None, data_dim)))
+model.add(layers.LSTM(420, return_sequences=True))
+model.add(layers.LSTM(180, return_sequences=True))
+model.add(
+    layers.LSTM(90, return_sequences=True, dropout=0.96)
+)  # Check this droput, seems high?
+model.add(layers.LSTM(48, activation="tanh"))  # changed from 48
 model.add(layers.Dense(data_dim))
 # model.compile(optimizer="adam", loss="mse", metrics=["accuracy"], learning_rate=4e-5)
-optimizer = keras.optimizers.RMSprop(learning_rate=4e-5)
+optimizer = keras.optimizers.RMSprop(learning_rate=3e-5)
 model.compile(optimizer=optimizer, loss="mse", metrics=["accuracy"])
 
 
 training = model.fit(
     lookback_train_mm,
     lookforward_train,
-    epochs=500,
+    epochs=100,
     batch_size=16,
     verbose=2,
     shuffle=True,
     validation_data=(lookback_validate_mm, lookforward_validate),
 )
 
-model.save("models/wind_prediction/env_sci_recursive_model_2.keras")
+model.save(
+    "/content/drive/MyDrive/rl_wind_prediction_data/trained_models/wind_prediction/env_sci_recursive_model_2.keras"
+)
 
 plt.plot(training.history["loss"])
 plt.plot(training.history["val_loss"])
