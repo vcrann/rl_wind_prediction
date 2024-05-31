@@ -4,13 +4,14 @@ from keras import layers
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 
-# Paths for colab
+# # Paths for colab
 # lookback = np.load(
 #     "/content/drive/MyDrive/rl_wind_prediction_data/earth_sciences_anemometer/training_data/worst_day_X_20_1.npy"
 # )  # Lookback
 # lookforward = np.load(
 #     "/content/drive/MyDrive/rl_wind_prediction_data/earth_sciences_anemometer/training_data/worst_day_Y_20_1.npy"
 # )  # Prediction
+
 lookback = np.load(
     "data/earth_sciences_anemometer/training_data/worst_day_X_20_1.npy"
 )  # Lookback
@@ -85,7 +86,7 @@ training = model.fit(
 # model.save(
 #     "/content/drive/MyDrive/rl_wind_prediction_data/trained_models/wind_prediction/env_sci_recursive_model_2.keras"
 # )
-model.save("models/wind_prediction/env_sci_recursive_model_3.keras")
+model.save("models/wind_prediction/env_sci_recursive_model_4.keras")
 
 plt.plot(training.history["loss"])
 plt.plot(training.history["val_loss"])

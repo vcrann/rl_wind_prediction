@@ -12,32 +12,34 @@ day_change_indexes = np.load(
 )  # Last index of each day
 
 # Making the dataset smaller for development
-raw_data = raw_data[:10000]
+raw_data = raw_data[:100000]
 # day_change_indexes = day_change_indexes[
 #     : day_change_indexes.searchsorted(100000, "right") - 1
 # ]
 
 data_indexes = list(range(len(raw_data)))
 
-lookback_window = 20
+lookback_window = 60
 prediction_window = 10
 
 day_start_index = 0
 
 # TODO add back for training set larger than 1 day
 
-# for day_end_index in day_change_indexes:
-#     # prediction_indexes = list(range(day_end_index - prediction_window + 1, day_end_index))
-#     del data_indexes[
-#         day_end_index - prediction_window + 1 : day_end_index # TODO check this maybe -1
-#     ]  # remove indexes that cant be selected at end of day
-#     # lookback_indexes = list(
-#     #     range(day_start_index, day_start_index + lookback_window - 1)
-#     # )
-#     del data_indexes[
-#         day_start_index : day_start_index + lookback_window - 1
-#     ]  # remove indexes that cant be selected at start of day
-#     day_start_index = day_end_index + 1
+for day_end_index in day_change_indexes:
+    # prediction_indexes = list(range(day_end_index - prediction_window + 1, day_end_index))
+    del data_indexes[
+        day_end_index
+        - prediction_window
+        + 1 : day_end_index  # TODO check this maybe -1
+    ]  # remove indexes that cant be selected at end of day
+    # lookback_indexes = list(
+    #     range(day_start_index, day_start_index + lookback_window - 1)
+    # )
+    del data_indexes[
+        day_start_index : day_start_index + lookback_window - 1
+    ]  # remove indexes that cant be selected at start of day
+    day_start_index = day_end_index + 1
 
 del data_indexes[
     : lookback_window - 1
@@ -87,11 +89,11 @@ model.add(layers.LSTM(180, return_sequences=True))
 model.add(
     layers.LSTM(90, return_sequences=True, dropout=0.96)
 )  # Check this droput, seems high?
-model.add(layers.LSTM(60, activation="relu"))  # changed from 48
+model.add(layers.LSTM(64, activation="tanh"))  # changed from 48
 model.add(layers.Dense(data_dim * prediction_window))
 model.add(layers.Reshape((prediction_window, data_dim)))
 # model.compile(optimizer="adam", loss="mse", metrics=["accuracy"], learning_rate=4e-5)
-optimizer = keras.optimizers.RMSprop(learning_rate=4e-5)
+optimizer = keras.optimizers.RMSprop(learning_rate=3e-5)
 model.compile(optimizer=optimizer, loss="mse", metrics=["accuracy"])
 
 
@@ -99,13 +101,13 @@ model.compile(optimizer=optimizer, loss="mse", metrics=["accuracy"])
 
 training = model.fit(
     training_data_generator,
-    epochs=1500,
+    epochs=100,
     batch_size=16,
-    verbose=2,
+    verbose=1,
     # validation_data=validation_data_generator,
 )
 
-model.save("models/wind_prediction/env_sci_model_2.keras")
+model.save("models/wind_prediction/env_sci_model_6.keras")
 
 plt.plot(training.history["loss"])
 # plt.plot(training.history["val_loss"])
