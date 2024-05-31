@@ -1,8 +1,5 @@
-import tensorflow as tf
 import keras
-from keras import layers
-import pandas as pd
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -38,12 +35,24 @@ lookback_validate_mm = mm.transform(
     lookback_validate.reshape(-1, lookback_validate.shape[-1])
 ).reshape(lookback_validate.shape)
 
-model = keras.saving.load_model(
-    "models/wind_prediction/env_sci_recursive_model_1.keras"
+model = keras.models.load_model(
+    "models/wind_prediction/env_sci_recursive_model_2.keras"
 )
-predicted_wind = model.predict(lookback_validate_mm)
 
-true_wind = lookforward_validate
+prediction_index = 10
+
+lookback = lookback_validate_mm[prediction_index]
+true_wind = np.append(
+    lookforward_validate[prediction_index], lookforward_validate[prediction_index + 1]
+)
+predicted_wind = np.array([])
+
+# Recursion
+for i in range(prediction_window):
+    next_prediction = model.predict(lookback.reshape(1, lookback_window, 3))
+    predicted_wind = np.append(predicted_wind, next_prediction)
+    lookback = np.append(lookback, mm.transform(next_prediction))
+    lookback = lookback[1:]
 
 
 plt.figure(figsize=(10, 6))  # plotting

@@ -5,11 +5,17 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 
 # Paths for colab
+# lookback = np.load(
+#     "/content/drive/MyDrive/rl_wind_prediction_data/earth_sciences_anemometer/training_data/worst_day_X_20_1.npy"
+# )  # Lookback
+# lookforward = np.load(
+#     "/content/drive/MyDrive/rl_wind_prediction_data/earth_sciences_anemometer/training_data/worst_day_Y_20_1.npy"
+# )  # Prediction
 lookback = np.load(
-    "/content/drive/MyDrive/rl_wind_prediction_data/earth_sciences_anemometer/training_data/worst_day_X_20_1.npy"
+    "data/earth_sciences_anemometer/training_data/worst_day_X_20_1.npy"
 )  # Lookback
 lookforward = np.load(
-    "/content/drive/MyDrive/rl_wind_prediction_data/earth_sciences_anemometer/training_data/worst_day_Y_20_1.npy"
+    "data/earth_sciences_anemometer/training_data/worst_day_Y_20_1.npy"
 )  # Prediction
 
 lookback_window = 20
@@ -76,9 +82,10 @@ training = model.fit(
     validation_data=(lookback_validate_mm, lookforward_validate),
 )
 
-model.save(
-    "/content/drive/MyDrive/rl_wind_prediction_data/trained_models/wind_prediction/env_sci_recursive_model_2.keras"
-)
+# model.save(
+#     "/content/drive/MyDrive/rl_wind_prediction_data/trained_models/wind_prediction/env_sci_recursive_model_2.keras"
+# )
+model.save("models/wind_prediction/env_sci_recursive_model_3.keras")
 
 plt.plot(training.history["loss"])
 plt.plot(training.history["val_loss"])
